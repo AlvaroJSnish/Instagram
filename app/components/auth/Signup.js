@@ -1,11 +1,13 @@
 import React, { Component } from 'react';
-import { View, TouchableOpacity, Text, StyleSheet } from 'react-native';
+import { View, TouchableOpacity, Text, ActivityIndicator, StyleSheet } from 'react-native';
 import Button from '../common/Button';
 import Input from '../common/Input';
 import Title from '../common/Title';
 import { Actions } from 'react-native-router-flux';
+import { connect } from 'react-redux';
+import { createUser } from '../../actions/AuthActions';
 
-export default class Signup extends Component {
+class Signup extends Component {
   state = {
     user: '',
     password: ''
@@ -24,12 +26,20 @@ export default class Signup extends Component {
   };
 
   onPressSignUp = () => {
-    // sign up
+    this.props.createUser(this.state.user, this.state.password);
   };
 
   onGoBack = () => {
     Actions.pop();
   };
+
+  renderButtons() {
+    if (this.props.auth.loading) {
+      return <ActivityIndicator />;
+    } else {
+      return <Button textButton="Signup" onPress={this.onPressSignUp.bind(this)} />;
+    }
+  }
 
   render() {
     return (
@@ -42,7 +52,8 @@ export default class Signup extends Component {
           onChange={this.onChangePassword.bind(this)}
           value={this.state.password}
         />
-        <Button textButton="Signup" onPress={this.onPressSignUp.bind(this)} />
+        <Text>{this.props.auth.errorCreating}</Text>
+        {this.renderButtons()}
         <TouchableOpacity onPress={this.onGoBack.bind(this)}>
           <View>
             <Text style={styles.text}>Already got an account, take me back!</Text>
@@ -52,6 +63,15 @@ export default class Signup extends Component {
     );
   }
 }
+
+const mapStateToProps = state => ({
+  auth: state.auth
+});
+
+export default connect(
+  mapStateToProps,
+  { createUser }
+)(Signup);
 
 const styles = StyleSheet.create({
   container: {

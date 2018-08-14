@@ -1,11 +1,13 @@
 import React, { Component } from 'react';
-import { View, StyleSheet } from 'react-native';
+import { View, Text, ActivityIndicator, StyleSheet } from 'react-native';
 import Button from '../common/Button';
 import Input from '../common/Input';
 import Title from '../common/Title';
 import { Actions } from 'react-native-router-flux';
+import { connect } from 'react-redux';
+import { loginUser } from '../../actions/AuthActions';
 
-export default class Login extends Component {
+class Login extends Component {
   state = {
     user: '',
     password: ''
@@ -24,12 +26,25 @@ export default class Login extends Component {
   };
 
   onPressLogin = () => {
-    // call firebase to login
+    this.props.loginUser(this.state.user, this.state.password);
   };
 
   onPressSignUp = () => {
     Actions.signup();
   };
+
+  renderButtons() {
+    if (this.props.auth.loading) {
+      return <ActivityIndicator />;
+    } else {
+      return (
+        <View>
+          <Button textButton="Login" onPress={this.onPressLogin.bind(this)} />
+          <Button textButton="Signup" onPress={this.onPressSignUp.bind(this)} />
+        </View>
+      );
+    }
+  }
 
   render() {
     return (
@@ -42,12 +57,21 @@ export default class Login extends Component {
           onChange={this.onChangePassword.bind(this)}
           value={this.state.password}
         />
-        <Button textButton="Login" onPress={this.onPressLogin.bind(this)} />
-        <Button textButton="Signup" onPress={this.onPressSignUp.bind(this)} />
+        <Text>{this.props.auth.errorLoging}</Text>
+        {this.renderButtons()}
       </View>
     );
   }
 }
+
+const mapStateToProps = state => ({
+  auth: state.auth
+});
+
+export default connect(
+  mapStateToProps,
+  { loginUser }
+)(Login);
 
 const styles = StyleSheet.create({
   container: {
