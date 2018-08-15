@@ -17,6 +17,22 @@ export const createUser = (email, password) => {
       .auth()
       .createUserWithEmailAndPassword(email, password)
       .then(user => createUserSuccess(dispatch, user))
+      .then(() => {
+        const { currentUser } = firebase.auth();
+        try {
+          firebase
+            .database()
+            .ref(`/users/${currentUser.uid}/`)
+            .set({
+              profile: {
+                email,
+                password
+              }
+            });
+        } catch (error) {
+          alert(error);
+        }
+      })
       .catch(() => createUserFail(dispatch));
   };
 };
