@@ -13,6 +13,9 @@ export const createUser = (email, password) => {
   return dispatch => {
     dispatch({ type: AUTH_CREATE_USER });
 
+    const tmpString = email.split('@');
+    const username = tmpString[0];
+
     firebase
       .auth()
       .createUserWithEmailAndPassword(email, password)
@@ -25,8 +28,16 @@ export const createUser = (email, password) => {
             .ref(`/users/${currentUser.uid}/`)
             .set({
               profile: {
+                name_profile: username,
                 email,
-                password
+                username,
+                password,
+                userpic: 'https://www.jamf.com/jamf-nation/img/default-avatars/generic-user-purple.png',
+                posts_number: 0,
+                followers: 0,
+                following: 0,
+                bio: null,
+                sex: null
               }
             });
         } catch (error) {

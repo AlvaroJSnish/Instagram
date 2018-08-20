@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Text, View, TouchableOpacity, ScrollView, StyleSheet } from 'react-native';
+import { Text, View, ScrollView, StyleSheet } from 'react-native';
 import { connect } from 'react-redux';
 import { fetchPosts } from '../../actions/PostActions';
 import Post from '../post/Post';

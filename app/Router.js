@@ -12,6 +12,7 @@ import Profile from './components/profile/Profile';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import EvilIcons from 'react-native-vector-icons/EvilIcons';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import EditProfile from './components/profile/EditProfile';
 
 const HomeIcon = () => <Ionicons name="md-home" size={25} />;
 const ExploreIcon = () => <Ionicons name="md-search" size={25} />;
@@ -30,9 +31,10 @@ const RouterComponent = () => (
           <Scene key="home" component={Home} icon={HomeIcon} title="Home" />
           <Scene key="addpost" component={AddPost} icon={AddPostIcon} hideNavBar hideTabBar />
           <Scene key="explore" component={Explore} icon={ExploreIcon} />
-          <Scene key="profile" component={Profile} icon={ProfileIcon} />
+          <Scene key="profile" component={Profile} icon={ProfileIcon} hideNavBar />
         </Tabs>
         <Scene key="configPost" component={ConfigPost} />
+        <Scene key="editProfile" component={EditProfile} />
       </Stack>
     </Stack>
   </Router>

@@ -42,6 +42,20 @@ export const addPost = (image, location, description) => {
         liked: false
       })
       .then(() => {
+        firebase
+          .database()
+          .ref(`/users/${currentUser.uid}/profile/posts_number`)
+          .once('value', snapshot => {
+            const posts = snapshot.val() + 1;
+            firebase
+              .database()
+              .ref(`/users/${currentUser.uid}/profile/`)
+              .update({
+                posts_number: posts
+              });
+          });
+      })
+      .then(() => {
         dispatch({ type: POST_ADD });
         Actions.reset('app');
       });
