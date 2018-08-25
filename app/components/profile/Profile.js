@@ -1,13 +1,15 @@
 import React, { Component } from 'react';
-import { Text, View, Image, ScrollView, Platform, TouchableOpacity, StyleSheet } from 'react-native';
+import { Text, View, Image, ScrollView, TouchableOpacity, StyleSheet } from 'react-native';
 import { connect } from 'react-redux';
 import { fetchProfile } from '../../actions/ProfileActions';
 import { fetchPosts } from '../../actions/PostActions';
+import { fetchHighlights } from '../../actions/HighlightActions';
 import Button from '../common/Button';
 import Header from '../common/Header';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
 import Post from '../post/Post';
+import HighlightIcon from '../highlighteds/HighlightIcon';
 import { Actions } from 'react-native-router-flux';
 class Profile extends Component {
   state = {
@@ -21,6 +23,7 @@ class Profile extends Component {
 
   componentWillMount() {
     this.props.fetchProfile();
+    this.props.fetchHighlights();
   }
 
   componentWillReceiveProps(nextProps) {
@@ -34,8 +37,10 @@ class Profile extends Component {
         posts: nextProps.profile.posts_number,
         followers: nextProps.profile.followers,
         following: nextProps.profile.following,
+        all_posts: nextProps.posts,
         postsKeys: Object.keys(nextProps.posts),
-        postsArray: Object.values(nextProps.posts)
+        postsArray: Object.values(nextProps.posts),
+        highlightsArray: nextProps.highlights
       });
     }
   }
@@ -104,11 +109,28 @@ class Profile extends Component {
     Actions.editProfile(this.props.profile);
   }
 
+  createNewHighlight() {
+    Actions.createHighlight({ data: this.state.all_posts });
+  }
+
+  renderHighlights() {
+    if (this.state.highlightsArray !== null && this.state.highlightsArray !== undefined) {
+      let array = Object.values(this.state.highlightsArray);
+      let keys = Object.keys(this.state.highlightsArray);
+
+      return array.map((highlight, i) => {
+        return <HighlightIcon key={keys[i]} {...highlight} onPress={() => Actions.highlight({ data: highlight })} />;
+      });
+    } else {
+      return <Text>Loading...</Text>;
+    }
+  }
+
   render() {
     return (
       <View style={styles.container}>
         <Header title={this.state.username} />
-        <ScrollView contentContainerStyle={{ justifyContent: 'center' }}>
+        <ScrollView contentContainerStyle={{ justifyContent: 'center' }} showsVerticalScrollIndicator={false}>
           <View style={styles.picAndInfo}>
             {this.renderImage()}
             <View style={{ flexDirection: 'column', marginLeft: 20 }}>
@@ -137,18 +159,22 @@ class Profile extends Component {
           <View style={styles.userBioAndStories}>
             <Text style={{ fontSize: 12, fontWeight: 'bold' }}>{this.state.name_profile}</Text>
             <Text style={{ fontSize: 12 }}>{this.state.bio}</Text>
-            <View style={{ flexDirection: 'column', marginTop: 10, marginBottom: 8 }}>
-              <TouchableOpacity>
-                <View>
-                  <Image
-                    style={{ width: 80, height: 80 }}
-                    source={{
-                      uri: 'https://image.ibb.co/kxRZNe/image.png'
-                    }}
-                  />
-                  <Text style={{ marginLeft: 26, marginTop: 2, marginBottom: 2 }}>New</Text>
+            <View style={{ flexDirection: 'row', marginTop: 10, marginBottom: 30 }}>
+              <ScrollView contentContainerStyle={{ height: 100 }} horizontal showsHorizontalScrollIndicator={false}>
+                <View style={{ flexDirection: 'column' }}>
+                  <TouchableOpacity style={styles.storie} onPress={this.createNewHighlight.bind(this)}>
+                    <View>
+                      <Image
+                        style={{ width: 80, height: 80 }}
+                        source={{
+                          uri: 'https://image.ibb.co/kxRZNe/image.png'
+                        }}
+                      />
+                    </View>
+                  </TouchableOpacity>
                 </View>
-              </TouchableOpacity>
+                {this.renderHighlights()}
+              </ScrollView>
             </View>
           </View>
           <View style={styles.typeView}>
@@ -182,12 +208,13 @@ class Profile extends Component {
 
 const mapStateToProps = state => ({
   profile: state.profile.profile,
-  posts: state.post.posts
+  posts: state.post.posts,
+  highlights: state.highlight.highlights
 });
 
 export default connect(
   mapStateToProps,
-  { fetchProfile, fetchPosts }
+  { fetchProfile, fetchPosts, fetchHighlights }
 )(Profile);
 
 const styles = StyleSheet.create({
@@ -217,5 +244,8 @@ const styles = StyleSheet.create({
     width: 125,
     height: 125,
     margin: 1
+  },
+  storie: {
+    width: 90
   }
 });
