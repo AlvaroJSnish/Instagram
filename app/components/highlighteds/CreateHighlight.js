@@ -2,10 +2,9 @@ import React, { Component } from 'react';
 import { View, StyleSheet } from 'react-native';
 import Header from '../common/Header';
 import { Actions } from 'react-native-router-flux';
-import { connect } from 'react-redux';
 import MiniPost from '../post/MiniPost';
 
-class CreateHighlight extends Component {
+export default class CreateHighlight extends Component {
   state = {
     images: []
   };
@@ -71,15 +70,6 @@ class CreateHighlight extends Component {
     );
   }
 }
-
-mapStateToProps = state => ({
-  pictures: state.highlight
-});
-
-export default connect(
-  mapStateToProps,
-  null
-)(CreateHighlight);
 
 const styles = StyleSheet.create({
   container: {
