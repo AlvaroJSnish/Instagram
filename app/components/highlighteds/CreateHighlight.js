@@ -33,14 +33,6 @@ export default class CreateHighlight extends Component {
     });
   }
 
-  componentWillReceiveProps(nextProps) {
-    if (this.props !== nextProps) {
-      this.setState({
-        pictures: nextProps
-      });
-    }
-  }
-
   renderPosts() {
     const postsKeys = Object.keys(this.props.data);
     const postsArray = Object.values(this.props.data);
